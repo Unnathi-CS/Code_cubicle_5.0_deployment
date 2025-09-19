@@ -26,10 +26,6 @@ source venv/bin/activate
 ### 4. Install Dependencies
 
 ```sh
-pip install -r requirements.txt
-```
-If `requirements.txt` is missing:
-```sh
 pip install flask python-dotenv pathway
 ```
 
@@ -73,3 +69,4 @@ Check your terminal for incoming events and messages.
 ---
 
 You are now ready to develop and run the project!
+
