@@ -22,6 +22,9 @@ venv\Scripts\activate
 # Linux/Mac:
 source venv/bin/activate
 ```
+all the commands to be run on WSL terminal for pathway to work
+<img width="1204" height="472" alt="image" src="https://github.com/user-attachments/assets/982bd999-6531-4ad0-8734-f13682d4487f" />
+
 
 ### 4. Install Dependencies
 
@@ -92,6 +95,7 @@ Check your terminal for incoming events and messages.
 ---
 
 You are now ready to develop and run the project!
+
 
 
 
