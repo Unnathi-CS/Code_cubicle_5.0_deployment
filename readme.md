@@ -58,6 +58,9 @@ Copy the HTTPS forwarding URL.
 - Add necessary scopes (e.g., `chat:write`, `channels:history`, etc.).
 - Install the app to your workspace.
 
+- <img width="1682" height="771" alt="image" src="https://github.com/user-attachments/assets/f99b8d3f-9635-4257-b537-aff3be578529" />
+
+
 ### 9. Test the Endpoint
 
 Use curl or Postman to send test events. Slack will send a `url_verification` event when you set the endpoint.
@@ -69,4 +72,5 @@ Check your terminal for incoming events and messages.
 ---
 
 You are now ready to develop and run the project!
+
 
