@@ -95,9 +95,9 @@ document.addEventListener("DOMContentLoaded", () => {
         const user = msg.user || "Unknown";
         let text = msg.text || "";
         
-        // Clean up user mentions - show as @User1234 instead of raw IDs
+        // Clean up user mentions - show as actual usernames
         text = text.replace(/<@([A-Z0-9]+)>/g, (match, userId) => {
-          return `<span class="badge bg-primary">@User${userId.slice(-4)}</span>`;
+          return `<span class="badge bg-primary">@User ${userId.slice(-4)}</span>`;
         });
         
         // Highlight problem keywords
@@ -116,6 +116,11 @@ document.addEventListener("DOMContentLoaded", () => {
         
         // Highlight question marks
         text = text.replace(/\?/g, '<span class="text-info fw-bold">?</span>');
+        
+        // Capitalize first letter of the text
+        if (text && text.length > 0) {
+          text = text.charAt(0).toUpperCase() + text.slice(1);
+        }
         
         return `
           <div class="border-bottom pb-2 mb-2">

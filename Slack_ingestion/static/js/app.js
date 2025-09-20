@@ -31,7 +31,7 @@ document.addEventListener("DOMContentLoaded", () => {
       cleanText = cleanText.replace(/\*(.*?)\*/g, '<em>$1</em>');
       cleanText = cleanText.replace(/\n/g, '<br>');
       
-      div.innerHTML = `<p><strong>AI:</strong> ${cleanText}</p>`;
+      div.innerHTML = `<p><strong>Hackathon AI Assistant:</strong> ${cleanText}</p>`;
     } else {
       // For user messages, escape HTML to prevent XSS
       const escapedText = text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -110,7 +110,7 @@ document.addEventListener("DOMContentLoaded", () => {
       <h6>Quick Questions:</h6>
       <div class="d-flex flex-wrap gap-2">
         ${predefinedQueries.map(query => 
-          `<button class="btn btn-outline-primary btn-sm query-btn" data-query="${query}">${query}</button>`
+          `<button class="btn quick-question-btn btn-sm query-btn" data-query="${query}">${query}</button>`
         ).join('')}
       </div>
     `;
