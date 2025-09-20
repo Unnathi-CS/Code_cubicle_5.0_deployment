@@ -221,6 +221,9 @@ def get_response():
                     text = problem.get('text', '')[:100] + "..." if len(problem.get('text', '')) > 100 else problem.get('text', '')
                     text = clean_message_text(text)
                     text = highlight_keywords(text)
+                    # Capitalize first letter
+                    if text and text[0].islower():
+                        text = text[0].upper() + text[1:]
                     response += f"{i}. {text}<br>"
                 response += f"<br><em>Total problems found: {len(problems)}</em>"
             else:
@@ -236,6 +239,9 @@ def get_response():
                     text = question.get('text', '')[:80] + "..." if len(question.get('text', '')) > 80 else question.get('text', '')
                     text = clean_message_text(text)
                     text = highlight_keywords(text)
+                    # Capitalize first letter
+                    if text and text[0].islower():
+                        text = text[0].upper() + text[1:]
                     response += f"{i}. {text}<br>"
                 response += f"<br><em>Total questions: {len(questions)}</em>"
             else:

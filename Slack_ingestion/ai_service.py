@@ -101,14 +101,37 @@ class AIService:
     
     def _extract_context(self, text: str, msg: Dict) -> str:
         """Extract meaningful context from message."""
-        # Clean up user mentions
-        text = re.sub(r'<@[A-Z0-9]+>', 'user', text)
+        # Import here to avoid circular imports
+        from utils import get_slack_user_info
+        
+        # Clean up user mentions and convert to real usernames
+        def replace_user_mention(match):
+            user_id = match.group(1)
+            user_info = get_slack_user_info(user_id)
+            return user_info['display_name']
+        
+        text = re.sub(r'<@([A-Z0-9]+)>', replace_user_mention, text)
         
         # Extract key phrases
         sentences = text.split('.')
         key_sentences = [s.strip() for s in sentences if len(s.strip()) > 10]
         
-        return '. '.join(key_sentences[:2]) if key_sentences else text[:100]
+        # Capitalize first letter of each sentence
+        formatted_sentences = []
+        for sentence in key_sentences[:2]:
+            if sentence:
+                sentence = sentence.strip()
+                if sentence and not sentence[0].isupper():
+                    sentence = sentence[0].upper() + sentence[1:]
+                formatted_sentences.append(sentence)
+        
+        return '. '.join(formatted_sentences) if formatted_sentences else self._capitalize_first_letter(text[:100])
+    
+    def _capitalize_first_letter(self, text: str) -> str:
+        """Capitalize the first letter of a text."""
+        if not text:
+            return text
+        return text[0].upper() + text[1:] if text and not text[0].isupper() else text
     
     def _assess_urgency(self, text: str) -> int:
         """Assess urgency level (1-5)."""
@@ -217,7 +240,7 @@ class AIService:
         formatted = "<strong>Top Problems Identified:</strong><br><br>"
         
         for i, problem in enumerate(problems, 1):
-            urgency_icon = "🚨" if problem['urgency'] >= 4 else "⚠️" if problem['urgency'] >= 3 else "ℹ️"
+            urgency_icon = "🚨" if problem['urgency'] >= 4 else "⚠️" if problem['urgency'] >= 3 else ""
             category = problem['category']
             context = problem['context'][:100] + "..." if len(problem['context']) > 100 else problem['context']
             
