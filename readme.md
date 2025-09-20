@@ -1,4 +1,4 @@
-# Hackathon Wall – RAG + Pathway Powered Chatbot
+# RAG + Pathway Powered Chatbot
 
 Hackathon Wall is an intelligent chatbot platform built using **Flask**, **RAG (Retrieval-Augmented Generation)**, and **Pathway**.  
 It allows users to interact with an AI assistant that retrieves relevant information from Slack channels and generates context-aware responses in real time.
@@ -130,3 +130,4 @@ By default, the server runs at : http://127.0.0.1:5000/
 Made with ❤️ by She-E-Os
 
 ---
+
