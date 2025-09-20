@@ -14,7 +14,6 @@ env_template.txt
 
 # Local DB / data files
 *.db
-messages.json
 
 # IDE/editor files
 .vscode/
