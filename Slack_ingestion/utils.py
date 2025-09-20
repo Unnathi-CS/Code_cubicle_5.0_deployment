@@ -29,8 +29,24 @@ def get_slack_user_info(user_id: str) -> Dict[str, str]:
         if not bot_token:
             return {"name": f"User {user_id[-4:]}", "real_name": f"User {user_id[-4:]}"}
         
-        # For now, return a formatted user ID
-        # In a real implementation, you'd call the Slack API
+        # Try to get real username from Slack API
+        import requests
+        headers = {"Authorization": f"Bearer {bot_token}"}
+        response = requests.get(f"https://slack.com/api/users.info?user={user_id}", headers=headers)
+        
+        if response.status_code == 200:
+            data = response.json()
+            if data.get("ok"):
+                user_info = data.get("user", {})
+                real_name = user_info.get("real_name", f"User {user_id[-4:]}")
+                display_name = user_info.get("display_name") or user_info.get("name", f"User {user_id[-4:]}")
+                return {
+                    "name": display_name,
+                    "real_name": real_name,
+                    "display_name": display_name
+                }
+        
+        # Fallback to formatted user ID
         return {
             "name": f"User {user_id[-4:]}",
             "real_name": f"User {user_id[-4:]}",
@@ -49,11 +65,20 @@ def clean_message_text(text: str) -> str:
     if not text:
         return text
     
-    # Replace user mentions with formatted names
-    text = re.sub(r'<@([A-Z0-9]+)>', lambda m: format_user_mention(m.group(1)), text)
+    # Replace user mentions with real usernames
+    def replace_user_mention(match):
+        user_id = match.group(1)
+        user_info = get_slack_user_info(user_id)
+        return user_info['display_name']
+    
+    text = re.sub(r'<@([A-Z0-9]+)>', replace_user_mention, text)
     
     # Clean up other Slack formatting
     text = re.sub(r'<!(channel|here|everyone)>', r'@\1', text)
+    
+    # Capitalize first letter
+    if text and text[0].islower():
+        text = text[0].upper() + text[1:]
     
     return text
 
