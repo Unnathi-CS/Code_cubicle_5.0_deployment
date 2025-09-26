@@ -5,7 +5,6 @@ from flask import Flask, redirect, render_template, session, url_for, request
 from authlib.integrations.flask_client import OAuth
 from dotenv import load_dotenv
 
-
 load_dotenv()
 
 
@@ -92,5 +91,3 @@ app = create_app()
 if __name__ == "__main__":
     port = int(os.getenv("PORT", 5000))
     app.run(host="0.0.0.0", port=port, debug=True)
-
-
