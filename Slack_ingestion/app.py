@@ -13,10 +13,10 @@ def create_app() -> Flask:
     app.secret_key = os.getenv("SECRET_KEY", os.urandom(24))
 
     app.config.update(
-        GOOGLE_CLIENT_ID=os.getenv("GOOGLE_CLIENT_ID", ""),
-        GOOGLE_CLIENT_SECRET=os.getenv("GOOGLE_CLIENT_SECRET", ""),
+        GOOGLE_CLIENT_ID=os.getenv("GOOGLE_CLIENT_ID"),
+        GOOGLE_CLIENT_SECRET=os.getenv("GOOGLE_CLIENT_SECRET"),
         SERVER_NAME=os.getenv("SERVER_NAME"),  # optional for url_for external urls
-        PREFERRED_URL_SCHEME=os.getenv("PREFERRED_URL_SCHEME", "http"),
+        PREFERRED_URL_SCHEME=os.getenv("PREFERRED_URL_SCHEME", "https"),
         SESSION_COOKIE_SAMESITE="Lax",
         SESSION_COOKIE_SECURE=False,  # set True if serving over HTTPS in production
     )
