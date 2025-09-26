@@ -102,7 +102,8 @@ class AIService:
     def _extract_context(self, text: str, msg: Dict) -> str:
         """Extract meaningful context from message."""
         # Import here to avoid circular imports
-        from utils import get_slack_user_info
+        from Slack_ingestion.utils import get_slack_user_info
+
         
         # Clean up user mentions and convert to real usernames
         def replace_user_mention(match):
