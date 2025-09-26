@@ -150,9 +150,12 @@ PATHWAY_TABLES = {
     'rag_index': rag_index
 }
 
-# Print processed messages for debugging
-pw.debug.compute_and_print(processed_messages)
+# Note: Pathway tables are now ready for use
+# The pipeline will be automatically managed by the main application
+# No need to call pw.run() here as it's handled by the main app
 
-# Run the pipeline
 if __name__ == "__main__":
-    pw.run()
+    # This file should not be run directly
+    print("⚠️ This file should not be run directly.")
+    print("✅ Use 'python src/main.py' or 'python src/app.py' instead.")
+    print("📊 Pathway tables are ready for integration.")

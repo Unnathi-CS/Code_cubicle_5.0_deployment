@@ -5,17 +5,14 @@ This file integrates the Pathway database with the Flask web application.
 """
 
 import pathway as pw
-import threading
-import time
 import logging
 from flask import Flask, request, render_template, jsonify
 import os
 from dotenv import load_dotenv
-from stream import push_message
+from stream import push_message, get_stream_stats
 from utils import is_valid_message
 from rag_query_service import rag_query_service
 from pathway_rag_service import initialize_pathway_rag_service
-import logging
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -26,50 +23,29 @@ load_dotenv()
 # Global variables for Pathway system
 pathway_tables = {}
 pathway_service = None
-pathway_thread = None
 
-def run_pathway_pipeline():
-    """Run the Pathway pipeline in a separate thread."""
-    global pathway_tables, pathway_service
+# Initialize Pathway system
+try:
+    # Import Pathway tables
+    from pathway_pipeline import PATHWAY_TABLES
     
-    try:
-        # Import and run the pathway pipeline
-        from pathway_pipeline import PATHWAY_TABLES, processed_messages, users_table, channels_table, analytics_table, hourly_stats, rag_index
-        
-        # Store tables globally
-        pathway_tables = PATHWAY_TABLES
-        
-        # Initialize Pathway RAG service
-        pathway_service = initialize_pathway_rag_service(pathway_tables)
-        rag_query_service.pathway_service = pathway_service
-        
-        logger.info("Pathway pipeline started successfully")
-        
-        # Run the Pathway pipeline
-        pw.run()
-        
-    except Exception as e:
-        logger.error(f"Error running Pathway pipeline: {e}")
-
-def start_pathway_system():
-    """Start the Pathway system in a background thread."""
-    global pathway_thread
+    # Store tables globally
+    pathway_tables = PATHWAY_TABLES
     
-    if pathway_thread is None or not pathway_thread.is_alive():
-        pathway_thread = threading.Thread(target=run_pathway_pipeline, daemon=True)
-        pathway_thread.start()
-        logger.info("Pathway system started in background thread")
-        
-        # Give it a moment to initialize
-        time.sleep(2)
-    else:
-        logger.info("Pathway system already running")
+    # Initialize Pathway RAG service
+    pathway_service = initialize_pathway_rag_service(pathway_tables)
+    rag_query_service.pathway_service = pathway_service
+    
+    logger.info("✅ Pathway system initialized successfully")
+    logger.info(f"✅ Available tables: {list(pathway_tables.keys())}")
+    
+except Exception as e:
+    logger.warning(f"⚠️ Could not initialize Pathway system: {e}")
+    logger.warning("⚠️ Running in fallback mode with file-based storage")
+    pathway_service = None
 
 # Initialize Flask app
 app = Flask(__name__)
-
-# Start Pathway system
-start_pathway_system()
 
 # Root route -> serve frontend
 @app.route("/")
@@ -177,10 +153,11 @@ def pathway_status():
     """Get Pathway system status."""
     try:
         status = {
-            "pathway_running": pathway_thread is not None and pathway_thread.is_alive(),
+            "pathway_initialized": pathway_service is not None,
             "tables_available": len(pathway_tables) > 0,
             "service_initialized": pathway_service is not None,
-            "tables": list(pathway_tables.keys()) if pathway_tables else []
+            "tables": list(pathway_tables.keys()) if pathway_tables else [],
+            "mode": "pathway" if pathway_service else "fallback"
         }
         return jsonify(status)
     except Exception as e:
@@ -260,10 +237,24 @@ def pathway_urgent():
         logger.error(f"Error getting urgent messages: {e}")
         return jsonify({"error": str(e)}), 500
 
+@app.route("/api/stream/stats", methods=["GET"])
+def stream_stats():
+    """Get stream statistics."""
+    try:
+        stats = get_stream_stats()
+        return jsonify(stats)
+    except Exception as e:
+        logger.error(f"Error getting stream stats: {e}")
+        return jsonify({"error": str(e)}), 500
+
 if __name__ == "__main__":
-    logger.info("Starting Pathway-based Slack ingestion system...")
-    logger.info("Pathway system: Built-in database engine")
-    logger.info("No external databases required (PostgreSQL, Redis, MongoDB)")
+    logger.info("🚀 Starting Pathway-based Slack ingestion system...")
+    logger.info("📊 Pathway system: Built-in database engine")
+    logger.info("🗄️ No external databases required (PostgreSQL, Redis, MongoDB)")
+    logger.info("🌐 Web interface: http://localhost:5000")
+    logger.info("🤖 AI Chatbot: http://localhost:5000/chatbot")
+    logger.info("📈 Dashboard: http://localhost:5000/dashboard")
+    logger.info("🔗 Slack webhook: http://localhost:5000/slack/events")
     
     # Listen on all interfaces so ngrok can reach it
     app.run(host="0.0.0.0", port=5000, debug=True)

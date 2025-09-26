@@ -94,7 +94,7 @@ python src/main.py
 ### 5. Access the Interface
 
 - **Landing Page**: http://localhost:5000
-- **AI Chatbot**: http://localhost:5000/chatbot
+- **AI Hackathon Assistant**: http://localhost:5000/chatbot
 - **Live Dashboard**: http://localhost:5000/dashboard
 
 ## Configuration

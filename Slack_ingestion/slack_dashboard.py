@@ -1,8 +1,9 @@
-from flask import Flask, request, render_template, jsonify
+from flask import Flask, request, render_template, jsonify, redirect, session, url_for
 import os
 from dotenv import load_dotenv
 from datetime import datetime
 import json
+from authlib.integrations.flask_client import OAuth
 from ai_service import ai_service
 from utils import markdown_to_html, clean_message_text, highlight_keywords, format_user_mention
 
@@ -10,6 +11,28 @@ load_dotenv()
 SLACK_BOT_TOKEN = os.getenv("SLACK_BOT_TOKEN")
 
 app = Flask(__name__)
+app.secret_key = os.getenv("SECRET_KEY", os.urandom(24))
+
+# Google OAuth setup
+app.config.update(
+    GOOGLE_CLIENT_ID=os.getenv("GOOGLE_CLIENT_ID", ""),
+    GOOGLE_CLIENT_SECRET=os.getenv("GOOGLE_CLIENT_SECRET", ""),
+    SERVER_NAME=os.getenv("SERVER_NAME"),
+    PREFERRED_URL_SCHEME=os.getenv("PREFERRED_URL_SCHEME", "http"),
+    SESSION_COOKIE_SAMESITE="Lax",
+    SESSION_COOKIE_SECURE=False,
+)
+
+oauth = OAuth(app)
+oauth.register(
+    name="google",
+    client_id=app.config["GOOGLE_CLIENT_ID"],
+    client_secret=app.config["GOOGLE_CLIENT_SECRET"],
+    server_metadata_url="https://accounts.google.com/.well-known/openid-configuration",
+    client_kwargs={
+        "scope": "openid email profile",
+    },
+)
 
 # In-memory storage for messages (simple approach)
 messages = []
@@ -145,14 +168,55 @@ def handle_general_question(user_message, query_lower):
 
 @app.route("/")
 def landing():
-    return render_template("landing.html")
+    if session.get("user"):
+        return render_template("landing.html")
+    return render_template("login.html")
+
+@app.route("/login")
+def login():
+    redirect_uri = url_for("auth_callback", _external=True)
+    # Force Google account chooser every time
+    return oauth.google.authorize_redirect(redirect_uri, prompt="select_account")
+
+@app.route("/callback")
+def auth_callback():
+    token = oauth.google.authorize_access_token()
+    userinfo = None
+    try:
+        userinfo = oauth.google.parse_id_token(token)
+    except Exception:
+        userinfo = None
+    if not userinfo:
+        resp = oauth.google.get("https://openidconnect.googleapis.com/v1/userinfo")
+        userinfo = resp.json() if resp else None
+
+    if not userinfo:
+        return redirect(url_for("landing"))
+
+    session["user"] = {
+        "name": userinfo.get("name"),
+        "email": userinfo.get("email"),
+        "picture": userinfo.get("picture"),
+    }
+    return redirect(url_for("landing"))
+
+@app.route("/logout")
+def logout():
+    session.clear()
+    return redirect(url_for("landing"))
 
 @app.route("/chatbot")
 def chatbot():
+    user = session.get("user")
+    if not user:
+        return redirect(url_for("landing"))
     return render_template("index.html")
 
 @app.route("/dashboard")
 def dashboard():
+    user = session.get("user")
+    if not user:
+        return redirect(url_for("landing"))
     return render_template("dashboard.html")
 
 @app.route("/slack/events", methods=["POST"])
@@ -334,6 +398,11 @@ def get_messages():
         
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+# Make current session user available to all templates (for navbar, etc.)
+@app.context_processor
+def inject_user():
+    return {"session_user": session.get("user")}
 
 if __name__ == "__main__":
     print("Starting Hackathon Slack Dashboard...")
