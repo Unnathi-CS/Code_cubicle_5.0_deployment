@@ -1,6 +1,9 @@
 # RAG + Pathway Powered Chatbot
 
-Checkout the live app yourself @ codecubicle50deployment-production.up.railway.app  💕
+Checkout the live app yourself 
+```sh 
+codecubicle50deployment-production.up.railway.app  
+```
 
 Hackathon Wall is an intelligent chatbot platform built using **Flask**, **RAG (Retrieval-Augmented Generation)**, and **Pathway**.  
 It allows users to interact with an AI assistant that retrieves relevant information from Slack channels and generates context-aware responses in real time.
@@ -294,6 +297,7 @@ The system comes with built-in queries for common hackathon monitoring:
 Made with ❤️ by She-E-Os
 
 ---
+
 
 
 
