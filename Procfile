@@ -1,1 +1,1 @@
-web: gunicorn slack_dashboard:app
+web: gunicorn Slack_ingestion.slack_dashboard:app
