@@ -8,7 +8,7 @@ __pycache__/
 venv/
 .venv/
 
-# Environment files
+# Environment files (never commit secrets!)
 .env
 env_template.txt
 
@@ -22,3 +22,20 @@ env_template.txt
 # OS files
 .DS_Store
 Thumbs.db
+
+# Ngrok binaries / archives
+ngrok*
+*.tgz
+*.tar.gz
+*.zip
+
+# Logs
+*.log
+
+# Node / frontend builds (if you later add React or Tailwind build output)
+node_modules/
+dist/
+build/
+
+# Jupyter
+.ipynb_checkpoints/
