@@ -5,16 +5,17 @@ from flask import Flask, redirect, render_template, session, url_for, request
 from authlib.integrations.flask_client import OAuth
 from dotenv import load_dotenv
 
+
 load_dotenv()
 
 
 def create_app() -> Flask:
-    app = Flask(__name__)
+    app = Flask(_name_)
     app.secret_key = os.getenv("SECRET_KEY", os.urandom(24))
 
     app.config.update(
-        GOOGLE_CLIENT_ID=os.getenv("GOOGLE_CLIENT_ID"),
-        GOOGLE_CLIENT_SECRET=os.getenv("GOOGLE_CLIENT_SECRET"),
+        GOOGLE_CLIENT_ID=os.getenv("GOOGLE_CLIENT_ID", ""),
+        GOOGLE_CLIENT_SECRET=os.getenv("GOOGLE_CLIENT_SECRET", ""),
         SERVER_NAME=os.getenv("SERVER_NAME"),  # optional for url_for external urls
         PREFERRED_URL_SCHEME=os.getenv("PREFERRED_URL_SCHEME", "https"),
         SESSION_COOKIE_SAMESITE="Lax",
@@ -88,6 +89,6 @@ def create_app() -> Flask:
 
 app = create_app()
 
-if __name__ == "__main__":
+if _name_ == "_main_":
     port = int(os.getenv("PORT", 5000))
     app.run(host="0.0.0.0", port=port, debug=True)
