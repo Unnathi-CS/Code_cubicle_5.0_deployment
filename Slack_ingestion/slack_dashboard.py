@@ -4,8 +4,9 @@ from dotenv import load_dotenv
 from datetime import datetime
 import json
 from authlib.integrations.flask_client import OAuth
-from ai_service import ai_service
-from utils import markdown_to_html, clean_message_text, highlight_keywords, format_user_mention
+from Slack_ingestion.ai_service import ai_service
+from Slack_ingestion.utils import markdown_to_html, clean_message_text, highlight_keywords, format_user_mention
+
 
 load_dotenv()
 SLACK_BOT_TOKEN = os.getenv("SLACK_BOT_TOKEN")
