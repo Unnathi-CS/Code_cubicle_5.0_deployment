@@ -7,25 +7,35 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <meta name="color-scheme" content="light dark">
 </head>
-<body class="min-h-screen bg-gray-50 text-gray-900">
-  <nav class="fixed-top border-b bg-white/80 backdrop-blur supports-[backdrop-filter]:bg-white/60 z-50">
+<body class="flex flex-col min-h-screen bg-gray-50 text-gray-900">
+  <!-- Fixed Navbar -->
+  <nav class="fixed top-0 inset-x-0 z-50 border-b bg-white/80 backdrop-blur supports-[backdrop-filter]:bg-white/60 shadow-sm">
     <div class="mx-auto max-w-6xl px-4">
       <div class="flex h-16 items-center justify-between">
+        <!-- Logo + Brand -->
         <a href="{{ url_for('landing') }}" class="flex items-center gap-2">
-          <img src="{{ url_for('static', filename='images/logo.png') }}" alt="CodeCubicle" class="h-8 w-8 rounded-md object-contain" />
-          <span class="font-semibold tracking-tight">CodeCubicle</span>
+          <img src="{{ url_for('static', filename='images/logo.png') }}" 
+               alt="CodeCubicle" 
+               class="h-6 w-6 md:h-8 md:w-8 rounded-md object-contain" />
+          <span class="font-semibold tracking-tight text-gray-900">CodeCubicle</span>
         </a>
+
+        <!-- Right Side (Login / Logout) -->
         <div class="flex items-center gap-3">
           {% if not session_user %}
-            <a href="{{ url_for('login') }}" class="inline-flex items-center rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-600/40">
+            <a href="{{ url_for('login') }}" 
+               class="inline-flex items-center rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-600/40">
               Login with Google
             </a>
           {% else %}
             <div class="flex items-center gap-3">
               {% if session_user.picture %}
-              <img src="{{ session_user.picture }}" alt="avatar" class="h-8 w-8 rounded-full ring-2 ring-white" />
+              <img src="{{ session_user.picture }}" 
+                   alt="avatar" 
+                   class="h-8 w-8 rounded-full ring-2 ring-white object-cover" />
               {% endif %}
-              <a href="{{ url_for('logout') }}" class="inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-600/40">
+              <a href="{{ url_for('logout') }}" 
+                 class="inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-600/40">
                 Logout
               </a>
             </div>
@@ -35,23 +45,17 @@
     </div>
   </nav>
 
-  <main class="mx-auto max-w-6xl p-4">
+  <!-- Page Content -->
+  <main class="flex-grow mx-auto max-w-6xl p-4 pt-20">
     {% block content %}{% endblock %}
   </main>
 
-  <footer class="mt-16 border-t bg-white/50">
-    <div class="mx-auto max-w-6xl px-4 py-6 text-sm text-gray-500">
-      <div class="flex justify-between items-center">
-        <div>
-          <p>Made with <span class="heart">♥</span> CodeCubicle</p>
-        </div>
-        <div>
-          <p>© 2025 She-E-Os All rights reserved.</p>
-        </div>
-      </div>
+  <!-- Sticky Footer -->
+  <footer class="mt-auto border-t bg-white/70 backdrop-blur-sm">
+    <div class="mx-auto max-w-6xl px-4 py-6 text-sm text-gray-500 flex flex-col sm:flex-row justify-between items-center gap-2">
+      <p>Made with <span class="text-red-500">♥</span> CodeCubicle</p>
+      <p>© 2025 She-E-Os. All rights reserved.</p>
     </div>
   </footer>
 </body>
 </html>
-
-
